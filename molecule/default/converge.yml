@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include localize.
+      ansible.builtin.include_role:
+        name: alecunsolo.localize
