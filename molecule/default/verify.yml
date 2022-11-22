@@ -1,0 +1,21 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  - name: Include default vars.
+    ansible.builtin.include_vars:
+      dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/defaults/"
+      extensions:
+      - yml
+  - name: Get current locale and language configuration.
+    ansible.builtin.command:
+      cmd: localectl status
+    register: locale_status
+    changed_when: false
+  - name: Parse 'LANG' from current locale and language configuration.
+    ansible.builtin.set_fact:
+      locale_lang: "{{ locale_status.stdout | regex_search('LANG=([^\n]+)', '\\1') | default(['n/a'], true) | first }}"
+  - name: Test locale.
+    ansible.builtin.assert:
+      that: locale_lang == config_system_locale

@@ -1,6 +1,12 @@
 ---
 - name: Converge
   hosts: all
+  pre_tasks:
+    - name: Update cache
+      ansible.builtin.apt:
+        cache_valid_time: 3600
+        update_cache: yes
+      when: ansible_os_family | lower == 'debian'
   tasks:
     - name: Include localize.
       ansible.builtin.include_role:
