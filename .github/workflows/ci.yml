@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         distro:
-          - rockylinux9
+          - rockylinux8
           - debian11
           - ubuntu2204
     steps:
