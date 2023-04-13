@@ -11,7 +11,10 @@
 # Community module locale_gen does not work on EL
 - name: Check if locale exists.
   ansible.builtin.shell:
-    cmd: locale -a | grep -i {{ config_system_locale | regex_replace('-', '') | quote }}
+    cmd: |
+      set -o pipefail
+      locale -a | grep -i {{ config_system_locale | regex_replace('-', '') | quote }}
+    executable: /bin/bash
   register: found_locale
   changed_when: no
   failed_when: no
@@ -25,6 +28,7 @@
   ansible.builtin.command:
     cmd: localedef -i {{ _i }} -f {{ _f }} {{ config_system_locale | quote }}
   when: not ansible_check_mode and found_locale.rc != 0
+  changed_when: false
 
 - name: Get current locale and language configuration.
   ansible.builtin.command:
@@ -35,8 +39,10 @@
 - name: Parse 'LANG' from current locale and language configuration.
   ansible.builtin.set_fact:
     locale_lang: "{{ locale_status.stdout | regex_search('LANG=([^\n]+)', '\\1') | default(['n/a'], true) | first }}"
+  changed_when: false
 
 - name: Configure locale.
   ansible.builtin.command:
     cmd: localectl set-locale LANG={{ config_system_locale }}
   when: locale_lang != config_system_locale
+  changed_when: false
