@@ -3,7 +3,10 @@
 
 Ansible Role: localize
 =========
+## DISCLAIMER
+After [this](https://www.redhat.com/en/blog/furthering-evolution-centos-stream) announcement I will not test on RHEL anymore.
 
+---------
 This role configure the system-wide locale
 
 Requirements
